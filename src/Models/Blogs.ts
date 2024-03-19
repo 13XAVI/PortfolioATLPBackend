@@ -4,7 +4,7 @@ interface IntBlog {
     title: string,
     description: string,
     date: Date
-    image:string
+    imageUrl:string
 }
 
 const Blogchema = new Schema<IntBlog>({
@@ -12,7 +12,7 @@ const Blogchema = new Schema<IntBlog>({
         type: String,
         required: [true, "Title should not be empty!"]
     },
-    image:{
+    imageUrl:{
         type:String,
         required:[true,"Image file Is required"]
     },

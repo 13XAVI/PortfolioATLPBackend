@@ -92,7 +92,7 @@ export const getAllUser = async (req: Request, res: Response) => {
     try {
         const users = await User.find(req.body);
         res.status(200).send(users);
-    } catch (err) {
+    } catch(err) {
         console.error(err);
         res.status(500).send(err);
     }

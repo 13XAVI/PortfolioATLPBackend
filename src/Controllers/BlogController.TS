@@ -1,39 +1,46 @@
 import { Request, Response } from 'express';
 import { Blog } from "../Models/Blogs";
-import multer from "multer"
+import uploads from "../middleware/MulterUpload"
+import multer from 'multer';
+import uploadImageToCloudinary from '../cloudinary';
 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'Myploads/');
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname);
-    },
-  });
-  
-  const uploads = multer({ storage: storage });
-  
-  export const createBlog = async (req: Request, res: Response) => {
-    uploads.single('image')(req, res, async (err: any) => {
-      if (err instanceof multer.MulterError) {
-        console.error(err);
-        return res.status(500).json({ error: 'Failed to upload file' });
-      } else if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'An error occurred', err });
+export const createBlog = async (req: Request, res: Response) => {
+  try {
+
+    uploads.single('imageUrl')(req, res, async (err: any) => {
+      if (err) {
+        console.error('Error uploading file:', err);
+        return res.status(500).json({ error: 'Failed to upload the file' });
       }
-  
-      const newBlog = new Blog(req.body);
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
       try {
+        const imageUrl = await uploadImageToCloudinary(req.file.path);
+        const newBlog = new Blog({
+          ...req.body,
+          imageUrl: imageUrl
+        });
+
         await newBlog.save();
+
         res.status(201).json({ message: 'Blog Created Successfully!', newBlog });
-      } catch (err: any) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to create the Blog' });
+      } catch (uploadError) {
+        console.error('Error uploading image to Cloudinary:', uploadError);
+        res.status(500).json({ error: 'Failed to upload image to Cloudinary' });
       }
     });
-  };
+  } catch (error) {
+    console.error('Error creating blog:', error);
+    res.status(500).json({ error: 'Failed to create the Blog' });
+  }
+};
+
+
+
 
 export const deleteBlog = async (req: Request, res: Response) => {
     let blog = Blog.deleteOne(
