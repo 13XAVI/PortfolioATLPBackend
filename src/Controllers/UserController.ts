@@ -1,21 +1,30 @@
 import { Request, Response } from 'express';
 import { User, } from "../Models/User";
-
-import CryptoJs from "crypto-js"
+import bcrypt, { genSalt } from 'bcrypt';
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+dotenv.config()
 
 
+const secretKey = process.env.SECRET_KEY || 'default-secret-key';
 
 export const createUser = async (req: Request, res: Response) => {
-    const newUser = new User({
-        name: req.body.name,
-        email: req.body.email,
-        password: CryptoJs.AES.encrypt(req.body.password,process.env.SECRETE_KEY as string).toString(),
-        role:req.body.role
-    });
+    const { name, email, password, role } = req.body;
+    const saltRounds = 10; 
+
     try {
+        
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            role
+        });
+
         await newUser.save();
-        res.status(201).json({ message: "User Created Successfully!",user:newUser });
+        res.status(201).json({ message: "User Created Successfully!", user: newUser });
     } catch (err: any) {
         console.error(err);
         res.status(500).json({ error: "Failed to create the user" });
@@ -37,28 +46,33 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 
 export const LoginUser = async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
     try {
-        const user = await User.findOne({ email: req.params.email });
+        const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(401).send({ msg: "Unauthorized user" });
+            return res.status(401).send("Invalid user or password");
         }
 
-        const decryptedPassword = CryptoJs.AES.decrypt(user.password, process.env.SECRET_KEY as string).toString(CryptoJs.enc.Utf8);
-        
-        if (decryptedPassword !== req.body.password) {
+       const  hasUserPass =  await bcrypt.hash(req.body.password,10)
+        const passwordMatch = await bcrypt.compare(password,hasUserPass);
+
+        if (!passwordMatch) {
             return res.status(401).send("Password does not match");
         }
+        console.log("secrete Key",secretKey)
+        const userToken = jwt.sign({ id: user.id }, secretKey as string, { expiresIn: "7d" });
 
-        const userToken = jwt.sign({ id: user.id }, process.env.SECRET_KEY as string, { expiresIn: "7d" });
-
-        const { password, __v, createdAt, updatedAt, ...userData } = user.toObject(); // Convert user document to plain JavaScript object
+        const { password: _, __v, createdAt, updatedAt, ...userData } = user.toObject();
         res.status(200).json({ ...userData, token: userToken });
     } catch (error) {
         console.error("Error occurred while logging in:", error);
         res.status(500).send(error);
     }
 };
+
+
 
 export const updateUser = async (req: Request, res: Response) => {
     let user = User.findByIdAndUpdate(
