@@ -29,4 +29,4 @@ const Blogchema = new Schema<IntBlog>({
     
 }, { timestamps: true});
 
-export const Blog = model<IntBlog>('Blog', Blogchema);
+export default model<IntBlog>('Blog', Blogchema);

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Blog } from "../Models/Blogs";
+import  Blog  from "../Models/Blogs";
 import uploads from "../middleware/MulterUpload"
 import multer from 'multer';
 import uploadImageToCloudinary from '../cloudinary';

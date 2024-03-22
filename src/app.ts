@@ -1,25 +1,23 @@
-import express from "express"
-import dotenv from "dotenv"
-import mongoose from "mongoose"
-import UserController from "../src/Controllers/UserController"
-import BlogController from "../src/Controllers/BlogController"
-import userRoutes from "./Routes/UsersRouters"
-import BlogRoutes from "./Routes/BlogsRouters"
+import express, { NextFunction } from 'express';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import AllRoutes from './Routes/AllRoutes';
 
-const app = express()
+
+dotenv.config();
+
+const app = express();
+
+
 app.use(express.json());
-dotenv.config()
-const port = process.env.PORT
 
-mongoose.connect(process.env.MONGO_URL as string).then(()=> console.log("Connected to the database")).catch((err)=>console.log(err))
-app.get('/', (req, res) => res.send('Hello World!'))
+mongoose.connect(process.env.MONGO_URL as string)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Error connecting to MongoDB:', err));
 
+app.use('/api/v1', AllRoutes);
 
-
-app.use("/api/User",userRoutes)
-
-app.use("/api/Blog",BlogRoutes)
-
-app.post("/ap",)
-
-app.listen(port, () => console.log(` app listening on port ${port}!`))
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
