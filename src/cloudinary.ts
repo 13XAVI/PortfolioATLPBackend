@@ -9,9 +9,9 @@ cloudinary.config({
     api_secret: process.env.API_SECRET
 });
 
-const uploadImageToCloudinary = async (imagePath: string) => {
+const uploadImageToCloudinary = async (file: Express.Multer.File) => {
     try {
-        const result = await cloudinary.uploader.upload(imagePath);
+        const result = await cloudinary.uploader.upload(file.path);
         return result.secure_url;
     } catch (error) {
         console.error('Error uploading image to Cloudinary:', error);

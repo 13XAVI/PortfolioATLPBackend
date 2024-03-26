@@ -1,30 +1,15 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
-
-interface Likes{
-    id?: number;
-    commentId?: number;
-    userId?: number;
-
+export interface ILike extends Document {
+    blogId: string;
+    userId: string;
+    
 }
 
-const LikeSchema = new Schema<Likes>({
-    id: {
-        type: Number,
-        required: [true, "Id should not be empty!"]
-    },
+const likeSchema: Schema = new Schema({
+    blogId: { type: Schema.Types.ObjectId, ref: 'Blog', required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+});
 
-    commentId: {
-        type: Number,
-        required: [true, "CommentId should not be empty!"]
-    },
-
-    userId:{
-        type:String,
-        required:[true," User Id should not be empty!"]
-    },
-  
-    
-}, { timestamps: true});
-
-export default model<Likes>('Likes', LikeSchema);
+const Like = mongoose.model<ILike>('Like', likeSchema);
+export default Like;

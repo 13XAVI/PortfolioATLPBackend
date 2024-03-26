@@ -1,12 +1,27 @@
 import { Request, Response } from 'express';
-import   Like  from "../Models/Likes"; 
+import   Like, { ILike }  from "../Models/Likes"; 
+
+
+export const getLikesByPostId = async (req: Request, res: Response) => {
+    try {
+        const { postId } = req.params;
+        const likes: ILike[] = await Like.find({ postId }); 
+        res.status(200).json(likes);
+    } catch (error) {
+        console.error('Error fetching likes by post ID:', error);
+        res.status(500).json({ error: 'Failed to fetch likes' });
+    }
+};
+
 
 
 export const createLike = async (req: Request, res: Response) => {
     try {
-        const { commentId, userId } = req.body;
-        const newLike = await Like.create({ commentId, userId });
-        res.status(201).json({ message: 'Like Created Successfully!', newLike });
+        const { blogId, userId } = req.body;
+        const likeCount = await Like.countDocuments({ blogId });
+
+        const newLike = await Like.create({ blogId, userId });
+        res.status(201).json({ message: 'Like Created Successfully!', newLike,likeCount });
     } catch (error) {
         console.error('Error creating like:', error);
         res.status(500).json({ error: 'Failed to create like' });
@@ -59,12 +74,13 @@ export const getLikeById = async (req: Request, res: Response) => {
 export const updateLike = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { commentId, userId } = req.body;
-        const updatedLike = await Like.findByIdAndUpdate(id, { commentId, userId }, { new: true });
+        const { blogId, userId } = req.body;
+        const countLikes = Like.countDocuments({blogId})
+        const updatedLike = await Like.findByIdAndUpdate(id, { blogId, userId }, { new: true });
         if (!updatedLike) {
             res.status(404).json({ message: 'Like not found' });
         } else {
-            res.status(200).json({ message: 'Like updated successfully', updatedLike });
+            res.status(200).json({ message: 'Like updated successfully', updatedLike,countLikes });
         }
     } catch (error) {
         console.error('Error updating like:', error);

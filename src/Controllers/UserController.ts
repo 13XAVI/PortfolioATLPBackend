@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 
-const secretKey = process.env.SECRET_KEY || 'default-secret-key';
+const secretKey = process.env.SECRETE_KEY as string;
 
 export const createUser = async (req: Request, res: Response) => {
     const { name, email, password, role } = req.body;
@@ -52,7 +52,7 @@ export const LoginUser = async (req: Request, res: Response) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(401).send("Invalid user or password");
+            return res.status(401).send("Invalid email or password");
         }
 
        const  hasUserPass =  await bcrypt.hash(req.body.password,10)
@@ -61,8 +61,7 @@ export const LoginUser = async (req: Request, res: Response) => {
         if (!passwordMatch) {
             return res.status(401).send("Password does not match");
         }
-        console.log("secrete Key",secretKey)
-        const userToken = jwt.sign({ id: user.id }, secretKey as string, { expiresIn: "7d" });
+        const userToken = jwt.sign({ id: user.id,role:user.role }, secretKey as string, { expiresIn: "7d" });
 
         const { password: _, __v, createdAt, updatedAt, ...userData } = user.toObject();
         res.status(200).json({ ...userData, token: userToken });
@@ -75,17 +74,16 @@ export const LoginUser = async (req: Request, res: Response) => {
 
 
 export const updateUser = async (req: Request, res: Response) => {
-    let user = User.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        (err:any,user:any)=>{
-            if(err){
-                res.status(500).send(err)
-            }else{
-                res.status(201).send({message:"Successfully Updated User",user})
-            }
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
         }
-    ) 
+        return res.status(200).json({ message: "Successfully Updated User", user });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
 };
 
 export const getAllUser = async (req: Request, res: Response) => {

@@ -61,7 +61,8 @@ export const deleteComment = async (req: Request, res: Response) => {
 export const getAllComments = async (req: Request, res: Response) => {
     try {
         const comments = await Comments.find();
-        res.status(200).json(comments);
+        const number_Comments = await Comments.countDocuments({comments})
+        res.status(200).json({comments,"number of comments" :number_Comments+1});
     } catch (error) {
         console.error('Error fetching all comments:', error);
         res.status(500).json({ error: 'Failed to fetch comments' });

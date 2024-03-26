@@ -1,11 +1,38 @@
-import { FORBIDDEN, INTERNAL_SERVER_ERROR, UNAUTHORIZED } from "http-status";
-import JWT, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { Request, Response, NextFunction } from 'express';
-import { auth } from "express-oauth2-jwt-bearer";
-import dotenv from "dotenv"
-dotenv.config();
+import jwt from 'jsonwebtoken';
 
-export const validateAccessToken = auth({
-  issuerBaseURL: `https://${process.env.AUTH0_DOMAIN}`,
-  audience: process.env.AUTH0_AUDIENCE,
-});
+interface CustomRequest extends Request {
+    userData?: { [key: string]: any }; 
+}
+
+const middleware = (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        let token = null
+         token = authHeader && authHeader.split(" ")[1];
+        if (!authHeader) {
+            throw new Error('Auth header not found');
+        }
+
+        if (!token) {
+            throw new Error('Token not found in header');
+        }
+
+        const decode = jwt.verify(token, process.env.SECRETE_KEY as string) as { [key: string]: any };
+        console.log(decode,"daata");
+
+        req.userData = decode;
+
+        next();
+    } catch (error) {
+        console.error(error);
+        res.status(401).json({
+            message: {
+                error :error,
+                message:"Auth  failed "
+            }
+        });
+    }
+};
+
+export default middleware;
