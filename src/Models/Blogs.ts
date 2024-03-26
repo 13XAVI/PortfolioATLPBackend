@@ -4,7 +4,7 @@ interface IntBlog {
     title: string,
     description: string,
     date: Date
-    image:string
+    file:string
 }
 
 const Blogchema = new Schema<IntBlog>({
@@ -12,7 +12,7 @@ const Blogchema = new Schema<IntBlog>({
         type: String,
         required: [true, "Title should not be empty!"]
     },
-    image:{
+    file:{
         type:String,
         required:[true,"Image file Is required"]
     },
@@ -29,4 +29,4 @@ const Blogchema = new Schema<IntBlog>({
     
 }, { timestamps: true});
 
-export const Blog = model<IntBlog>('Blog', Blogchema);
+export default model<IntBlog>('Blog', Blogchema);
