@@ -14,7 +14,7 @@ export interface CustomRequest extends Request {
 }
 
 export const isAdmin = (req: CustomRequest, res: Response, next: NextFunction) => {
-    console.log("User Data:", req.userData);
+
     
     if (req.userData && req.userData.role === "admin") {
         next();

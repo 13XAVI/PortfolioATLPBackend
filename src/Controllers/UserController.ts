@@ -33,14 +33,13 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
     let user = User.deleteOne(
-        { _id: req.params.id }, (err: any) => {
-            if (err) {
-              res.status(500).send(err);
-            } else {
-              res.status(200).send("Successfully Deleted User");
-            }
-          }
+        { _id: req.params.id }     
     ) 
+    if (!user) {
+        res.status(500).send({message:"User Not Found"});
+      } else {
+        res.status(200).send({message :"User deleted successfully"});
+      }
 };
 
 
@@ -65,12 +64,12 @@ export const LoginUser = async (req: Request, res: Response) => {
 
         const { password: _, __v, createdAt, updatedAt, ...userData } = user.toObject();
         res.status(200).json({ ...userData, token: userToken });
+       
     } catch (error) {
         console.error("Error occurred while logging in:", error);
         res.status(500).send(error);
     }
 };
-
 
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -86,6 +85,7 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 };
 
+
 export const getAllUser = async (req: Request, res: Response) => {
     try {
         const users = await User.find(req.body);
@@ -100,8 +100,8 @@ export const getAllUser = async (req: Request, res: Response) => {
 export const FindOneUser = async (req: Request, res: Response) => {
     let user = User.findOne(
         { _id: req.params.id }).then((err) => {
-            if (err) {
-                res.status(500).send(err)
+            if (!user) {
+                res.status(404).send("user Not Found")
             } else {
               res.status(200).send(user);
             }

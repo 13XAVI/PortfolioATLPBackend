@@ -10,7 +10,7 @@ const  router = Router()
 
 router.get("/User/All",middleware,isAdmin, UserController.getAllUser);
 router.get("/User/find/:id", middleware,isAdmin,UserController.FindOneUser);
-router.post("/User/Create",middleware,isAdmin, UserController.createUser);
+router.post("/User/Create", UserController.createUser);
 router.post("/User/Login", UserController.LoginUser);
 router.delete("/User/Delete/:id", middleware,isAdmin,UserController.deleteUser);
 router.put("/User/update/:id",middleware,isAdmin, UserController.updateUser);
