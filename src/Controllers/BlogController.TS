@@ -109,7 +109,7 @@ export const FindOneBlog = async (req: Request, res: Response) => {
   }
 };
 
-const BlogController = {
+const BlogControllers = {
     createBlog,
     deleteBlog,
     updateBlog,
@@ -117,4 +117,4 @@ const BlogController = {
     FindOneBlog
 };
 
-export default BlogController
+export default BlogControllers

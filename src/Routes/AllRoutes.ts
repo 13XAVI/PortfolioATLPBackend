@@ -1,5 +1,6 @@
 import { Router } from "express";
 import UserController from '../Controllers/UserController';
+
 import CommentController from '../Controllers/CommentController';
 import LikeController from '../Controllers/LikesController';
 import middleware from "../Authorize/auth";
@@ -7,7 +8,8 @@ import { isAdmin,isUser } from "../middleware/Auth/isAuthorized";
 import allDocumentations from "../documentationSwag/alldocs";
 import QuerryController from "../Controllers/Querries";
 import ProjectsController from "../Controllers/ProjectController";
-import BlogController from "../Controllers/BlogController";
+import BlogControllers from "../Controllers/BlogController";
+
 const  router = Router()
 
 
@@ -18,11 +20,11 @@ router.post("/User/Login", UserController.LoginUser);
 router.delete("/User/Delete/:id", middleware,isAdmin,UserController.deleteUser);
 router.put("/User/update/:id",middleware,isAdmin, UserController.updateUser);
 
-router.get("/Blog/All",middleware,isUser||isAdmin, BlogController.getAllBlog);
-router.get("/Blog/find/:id",middleware,isUser||isAdmin, BlogController.FindOneBlog);
-router.post("/Blog/create", middleware,isAdmin,BlogController.createBlog);
-router.delete("/Blog/delete/:id",middleware,isAdmin, BlogController.deleteBlog);
-router.put("/Blog/update/:id", middleware,isAdmin,BlogController.updateBlog);
+router.get("/Blog/All",middleware,isUser||isAdmin, BlogControllers.getAllBlog);
+router.get("/Blog/find/:id",middleware,isUser||isAdmin, BlogControllers.FindOneBlog);
+router.post("/Blog/create", middleware,isAdmin,BlogControllers.createBlog);
+router.delete("/Blog/delete/:id",middleware,isAdmin, BlogControllers.deleteBlog);
+router.put("/Blog/update/:id", middleware,isAdmin,BlogControllers.updateBlog);
 
 
 router.post('/comment/create',middleware,isUser, CommentController.createComment);
