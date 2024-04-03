@@ -77,4 +77,5 @@ npm start
 - **Testing APIs**: Run some basic tests
 ``` npm test```
 - **Test Coverage**: Coverave Test millestone.
-``` npm test:ci```
+``` npm run test:ci```
+

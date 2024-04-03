@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
 import express from "express";
 import AllRoutes from "./Routes/AllRoutes";
 import connectionNewDB from "./server";
