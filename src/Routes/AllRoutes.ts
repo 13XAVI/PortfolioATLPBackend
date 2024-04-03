@@ -1,5 +1,4 @@
 import { Router } from "express";
-import BlogController from "../Controllers/BlogController"
 import UserController from '../Controllers/UserController';
 import CommentController from '../Controllers/CommentController';
 import LikeController from '../Controllers/LikesController';
@@ -8,6 +7,7 @@ import { isAdmin,isUser } from "../middleware/Auth/isAuthorized";
 import allDocumentations from "../documentationSwag/alldocs";
 import QuerryController from "../Controllers/Querries";
 import ProjectsController from "../Controllers/ProjectController";
+import BlogController from "../Controllers/BlogController";
 const  router = Router()
 
 
