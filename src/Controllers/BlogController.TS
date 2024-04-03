@@ -7,6 +7,10 @@ import uploadImageToCloudinary from '../cloudinary';
 
 export const createBlog = async (req: Request, res: Response) => {
   try {
+    const existingBlog = await Blog.findOne({ title: req.body.title });
+        if (existingBlog) {
+            return res.status(400).json({ error: 'Blog with the same title already exists' });
+        }
     uploads.single('file')(req, res, async (err: any) => {
       if (err) {
         console.error('Error uploading file:', err);
@@ -29,10 +33,6 @@ export const createBlog = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to create the Blog' });
   }
 };
-
-
-
-
 
 export const deleteBlog = async (req: Request, res: Response) => {
   try {
