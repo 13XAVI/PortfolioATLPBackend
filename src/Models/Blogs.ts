@@ -14,7 +14,7 @@ const Blogchema = new Schema<IntBlog>({
     },
     file:{
         type:String,
-        required:[true,"Image file Is required"]
+        required:false
     },
 
     description: {

@@ -33,14 +33,13 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
     let user = User.deleteOne(
-        { _id: req.params.id }, (err: any) => {
-            if (err) {
-              res.status(500).send(err);
+        { _id: req.params.id })
+            if (!user) {
+              res.status(500).send({message :"Error in deletion"});
             } else {
               res.status(200).send("Successfully Deleted User");
             }
-          }
-    ) 
+    
 };
 
 

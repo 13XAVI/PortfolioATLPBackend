@@ -3,7 +3,8 @@ import  Comments  from "../Models/Comments";
 
 export const createComment = async (req: Request, res: Response) => {
     try {
-        const { blogId, message, userId } = req.body;
+        const { blogId, userId } = req.query;
+        const {message}=req.body
         const newComment = await Comments.create({ blogId, message, userId });
         res.status(201).json({ message: 'Comment Created Successfully!', newComment });
     } catch (error) {

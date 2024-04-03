@@ -14,7 +14,7 @@ export interface CustomRequest extends Request {
 }
 
 export const isAdmin = (req: CustomRequest, res: Response, next: NextFunction) => {
-    console.log("User Data:", req.userData);
+
     
     if (req.userData && req.userData.role === "admin") {
         next();
@@ -28,11 +28,11 @@ export const isAdmin = (req: CustomRequest, res: Response, next: NextFunction) =
 export const isUser = (req: CustomRequest, res: Response, next: NextFunction) => {
     console.log("User Data:", req.userData);
     
-    if (req.userData && req.userData.role === "admin") {
+    if (req.userData && req.userData.role === "user") {
         next(); 
     } else {
         res.status(FORBIDDEN).json({
-            message: "Authentication failed. User is not an admin."
+            message: "Authentication failed. User is not a user."
         });
     }
 };

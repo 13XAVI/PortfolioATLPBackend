@@ -1,16 +1,37 @@
-import express from "express"
-import dotenv from "dotenv"
-import mongoose from "mongoose"
-import AllRoutes from "./Routes/AllRoutes"
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import express from "express";
+import AllRoutes from "./Routes/AllRoutes";
+import connectionNewDB from "./server";
+import { Request, Response } from 'express';
+import cors from "cors";
 
-const app = express()
+
+
+const app = express();
+
+const port = process.env.PORT1
+
 app.use(express.json());
-dotenv.config()
-const port = process.env.PORT
+app.use(express.urlencoded({ extended: false }));
+app.use(cors());
+if (`${process.env.MONGO_URL}`) {
+  connectionNewDB(`${process.env.MONGO_URL}`);
+} else if (`${process.env.MONGODB_TEST}`) {
+  connectionNewDB(`${process.env.MONGODB_TEST}`);
+}
 
-mongoose.connect(process.env.MONGO_URL as string).then(()=> console.log("Connected to the database")).catch((err)=>console.log(err))
-app.get('/', (req, res) => res.send('Hello World!'))
+app.use("/api/V1", AllRoutes);
 
-app.use("/api/v1",AllRoutes)
 
-app.listen(port, () => console.log(` app listening on port ${port}!`))
+app.get("/", (req: Request, res: Response) => {
+    res.status(200).json({ message: "pass!" });
+});
+
+app.use("/**", (req: Request, res: Response) => {
+    res.status(404).json({ message: "Not Found!" });
+});
+
+app.listen(port, () => console.log(`App listening on port ${port}!`));
+
+export default app;
