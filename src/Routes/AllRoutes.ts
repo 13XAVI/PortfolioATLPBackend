@@ -8,7 +8,7 @@ import { isAdmin,isUser } from "../middleware/Auth/isAuthorized";
 import allDocumentations from "../documentationSwag/alldocs";
 import QuerryController from "../Controllers/Querries";
 import ProjectsController from "../Controllers/ProjectController";
-import BlogControllers from "../Controllers/BlogController";
+import BlogControllers from "../Controllers/blogController";
 
 const  router = Router()
 
