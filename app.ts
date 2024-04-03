@@ -1,8 +1,6 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
 import express from "express";
-import AllRoutes from "./Routes/AllRoutes";
-import connectionNewDB from "./server";
+import AllRoutes from "./src/Routes/AllRoutes";
+import connectionNewDB from "./src/server";
 import { Request, Response } from 'express';
 import cors from "cors";
 

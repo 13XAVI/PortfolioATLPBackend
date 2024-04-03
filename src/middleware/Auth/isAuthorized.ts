@@ -1,7 +1,5 @@
-import  dotenv from "dotenv"
-import { FORBIDDEN } from "http-status";
+import dotenv from 'dotenv'
 import { NextFunction,Response,Request } from "express";
-import { dot } from "node:test/reporters";
 import jwt from 'jsonwebtoken'
 dotenv.config()
 export interface CustomRequest extends Request {
@@ -19,7 +17,7 @@ export const isAdmin = (req: CustomRequest, res: Response, next: NextFunction) =
     if (req.userData && req.userData.role === "admin") {
         next();
     } else {
-        res.status(FORBIDDEN).json({
+        res.status(403).json({
             message: "Authentication failed. User is not an admin."
         });
     }
@@ -31,7 +29,7 @@ export const isUser = (req: CustomRequest, res: Response, next: NextFunction) =>
     if (req.userData && req.userData.role === "user") {
         next(); 
     } else {
-        res.status(FORBIDDEN).json({
+        res.status(403).json({
             message: "Authentication failed. User is not a user."
         });
     }

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import   connnectionNewDB from '../server';
-import app from '../app';
+import app from '../../app';
 
 beforeAll(async () => {
   await connnectionNewDB(`${process.env.MONGODB_TEST}` as string);
