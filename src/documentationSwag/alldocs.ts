@@ -12,7 +12,7 @@ const options = {
     version: "1.0.0",
     description: "My Personal Portfolio",
   },
-  basePath: "/",
+  basePath: "https://portfolioatlpbackend.onrender.com/api/V1/docs/",
   security: [
     {
       bearerAuth: [],
