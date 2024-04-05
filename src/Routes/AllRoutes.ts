@@ -47,7 +47,7 @@ router.delete("/Querry/delete/:id", middleware,isAdmin,QuerryController.deleteQu
 router.put("/Querry/update/:id",middleware,isAdmin, QuerryController.updateQuerry);
 
 
-router.get("/Project/GetallProject",middleware,isAdmin||isUser, ProjectsController.getAllProjects);
+router.get("/Project/GetallProject", ProjectsController.getAllProjects);
 router.get("/Project/GetOneProject/:id",isAdmin||isUser,ProjectsController.GetOneProject);
 router.post("/Project/CreateProject",middleware,isAdmin, ProjectsController.createProject);
 router.delete("/Project/deleteProject/:id", middleware,isAdmin,ProjectsController.deleteProject);
