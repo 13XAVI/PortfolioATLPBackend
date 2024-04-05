@@ -13,7 +13,11 @@ export const createUser = async (req: Request, res: Response) => {
     const saltRounds = 10; 
 
     try {
-        
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: "Email already exists" });
+        }
+
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const newUser = new User({
@@ -32,15 +36,19 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
-    let user = User.deleteOne(
-        { _id: req.params.id })
-            if (!user) {
-              res.status(500).send({message :"Error in deletion"});
-            } else {
-              res.status(200).send("Successfully Deleted User");
-            }
-    
+    try {
+        const user = await User.findOne({ _id: req.params.id });
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+        await User.deleteOne({ _id: req.params.id });
+        res.status(200).send("Successfully Deleted User");
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).send({ message: "Error in deletion" });
+    }
 };
+
 
 
 
