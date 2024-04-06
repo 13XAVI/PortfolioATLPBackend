@@ -1,34 +1,41 @@
 import { Request, Response } from 'express';
 import { User, } from "../Models/User";
-import bcrypt, { genSalt } from 'bcrypt';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import uploads from '../middleware/uploads/MulterUpload';
+import uploadImageToCloudinary from '../cloudinary';
 dotenv.config()
 
 
 const secretKey = process.env.SECRETE_KEY as string;
 
 export const createUser = async (req: Request, res: Response) => {
-    const { name, email, password, role } = req.body;
     const saltRounds = 10; 
 
     try {
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne(req.body.email);
         if (existingUser) {
             return res.status(400).json({ error: "Email already exists" });
         }
-
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        uploads.single('file')(req, res, async (err: any) => {
+            if (err) {
+              console.error('Error uploading file:', err);
+              return res.status(500).json({ error: 'Failed to upload the file' });
+            }
+            const fileResult = req.file ? await uploadImageToCloudinary(req.file) : null;
+        
+            
+        const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
         const newUser = new User({
-            name,
-            email,
+            file: fileResult||null,
+            ...req.body,
             password: hashedPassword,
-            role
         });
-
         await newUser.save();
         res.status(201).json({ message: "User Created Successfully!", user: newUser });
+    })
     } catch (err: any) {
         console.error(err);
         res.status(500).json({ error: "Failed to create the user" });

@@ -3,10 +3,13 @@ import AllRoutes from "./Routes/AllRoutes";
 import connectionNewDB from "./server";
 import { Request, Response } from 'express';
 import cors from "cors";
+import bodyParser from "body-parser";
 
 
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 const port = process.env.PORT1
 

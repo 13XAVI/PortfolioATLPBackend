@@ -7,7 +7,7 @@ import uploadImageToCloudinary from '../cloudinary';
 
 export const createBlog = async (req: Request, res: Response) => {
   try {
-    const existingBlog = await Blog.findOne({ title: req.body.title });
+    const existingBlog = await Blog.findOne( req.body.title );
         if (existingBlog) {
             return res.status(400).json({ error: 'Blog with the same title already exists' });
         }
