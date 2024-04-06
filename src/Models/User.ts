@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 
 interface IntUser {
+    file:string
     name: string;
     email: string;
     password: string;
@@ -11,6 +12,9 @@ interface IntUser {
 }
 
 const Userchema = new Schema<IntUser>({
+    file:{
+        type:String
+    },
     name: {
         type: String,
         required: [true, "name should not be empty!"]
