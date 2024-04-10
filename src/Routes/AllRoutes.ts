@@ -22,7 +22,7 @@ router.put("/User/update/:id",middleware,isAdmin, UserController.updateUser);
 router.put("/User/deleteAll",middleware,isAdmin, UserController.FindAllandDelete);
 
 router.get("/Blog/All", BlogControllers.getAllBlog);
-router.get("/Blog/find/:id",middleware,isUser||isAdmin, BlogControllers.FindOneBlog);
+router.get("/Blog/find/:id",middleware,isUser, BlogControllers.FindOneBlog);
 router.post("/Blog/create", middleware,isAdmin,BlogControllers.createBlog);
 router.delete("/Blog/delete/:id",middleware,isAdmin, BlogControllers.deleteBlog);
 router.put("/Blog/update/:id", middleware,isAdmin,BlogControllers.updateBlog);
