@@ -63,11 +63,14 @@ const options = {
         description: "Create a new user",
         requestBody: {
           content: {
-            "application/json": {
+            "multipart/form-data": {
               schema: {
                 type: "object",
                 properties: {
                   
+                  file: {
+                    type:"file"
+                  },
                   name: {
                     type: "string",
                   },

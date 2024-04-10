@@ -3,6 +3,7 @@ import  Blog  from "../Models/Blogs";
 import uploads from "../middleware/uploads/MulterUpload"
 import multer from 'multer';
 import uploadImageToCloudinary from '../cloudinary';
+import Like from '../Models/Likes';
 
 
 export const createBlog = async (req: Request, res: Response) => {
@@ -86,28 +87,35 @@ export const updateBlog = async (req: Request, res: Response) => {
 };
 
 export const getAllBlog = async (req: Request, res: Response) => {
-    try {
-        const Blogs = await Blog.find(req.body);
-        res.status(200).send(Blogs);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send(err);
-    }
-};
-
-
-export const FindOneBlog = async (req: Request, res: Response) => {
   try {
-      const blog = await Blog.findOne({ _id: req.params.id });
-      if (!blog) {
-          return res.status(404).json({ error: 'Blog not found' });
-      }
-      res.status(200).send(blog);
+      const blogs = await Blog.find(req.body).populate('comments');
+      const blogsWithLikeCount = await Promise.all(
+          blogs.map(async (blog) => {
+              const likeCount = await Like.countDocuments({ blogId: blog._id });
+              return { ...blog.toObject(), likeCount };
+          })
+      );
+      res.status(200).json(blogsWithLikeCount);
   } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+export const FindOneBlog = async (req: Request, res: Response) => {
+  try {
+      const blog = await Blog.findOne({ _id: req.params.id }).populate('comments');
+      if (!blog) {
+          return res.status(404).json({ error: 'Blog not found' });
+      }
+      const likeCount = await Like.countDocuments({ blogId: blog._id });
+      res.status(200).json({ ...blog.toObject(), likeCount });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 const BlogControllers = {
     createBlog,
