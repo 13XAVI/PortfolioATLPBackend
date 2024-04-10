@@ -1,16 +1,20 @@
-import { Schema, model } from "mongoose";
+import { Schema, model,Document, Types} from "mongoose";
 
-interface IntBlog {
+ interface IntBlog extends Document {
     title: string,
     description: string,
     date: Date
     file:string
+    likes: Array<any>; 
+    comments: Array<any>; 
 }
 
 const Blogchema = new Schema<IntBlog>({
+    
     title: {
         type: String,
-        required: [true, "Title should not be empty!"]
+        required: [true, "Title should not be empty!"],
+        unique:true, 
     },
     file:{
         type:String,
@@ -25,7 +29,10 @@ const Blogchema = new Schema<IntBlog>({
     date: {
         type: Date,
         default: Date.now()
-    }
+    },
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Like' }], 
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }]
+
     
 }, { timestamps: true});
 

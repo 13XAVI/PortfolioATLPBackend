@@ -14,9 +14,9 @@ export const createUser = async (req: Request, res: Response) => {
     const saltRounds = 10; 
 
     try {
-        const existingUser = await User.findOne(req.body.email);
+        const existingUser = await User.findOne({ email: req.body.email });
         if (existingUser) {
-            return res.status(400).json({ error: "Email already exists" });
+            return res.status(400).json({ error: "Email already exists",existingUser });
         }
         uploads.single('file')(req, res, async (err: any) => {
             if (err) {
@@ -122,13 +122,25 @@ export const FindOneUser = async (req: Request, res: Response) => {
           }
     ) 
 };
+
+export const FindAllandDelete = async (req: Request, res: Response) => {
+    let user = User.deleteMany().then((err) => {
+            if (err) {
+                res.status(500).send(err)
+            } else {
+              res.status(200).send(user);
+            }
+          }
+    ) 
+};
 const UserController = {
     createUser,
     deleteUser,
     updateUser,
     getAllUser,
     FindOneUser,
-    LoginUser
+    LoginUser,
+    FindAllandDelete
 };
 
 export default UserController

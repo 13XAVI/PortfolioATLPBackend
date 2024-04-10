@@ -1,17 +1,35 @@
 import { Request, Response } from 'express';
 import  Comments  from "../Models/Comments";
+import Blogs from '../Models/Blogs';
 
 export const createComment = async (req: Request, res: Response) => {
     try {
-        const { blogId, userId } = req.query;
-        const {message}=req.body
-        const newComment = await Comments.create({ blogId, message, userId });
-        res.status(201).json({ message: 'Comment Created Successfully!', newComment });
+        const { blogId, userId, message } = req.body;
+
+        if (!blogId || !userId || !message) {
+            return res.status(400).json({ error: 'Please provide all required fields: blogId, userId, message' });
+        }
+
+        const newComment = await Comments.create({ blogId, userId, message });
+
+        const blog = await Blogs.findOneAndUpdate(
+            { _id: blogId },
+            { $push: { comments: newComment._id } },
+            { new: true } 
+        ).populate('comments');
+
+        if (!blog) {
+            return res.status(404).json({ error: 'Blog not found' });
+        }
+
+        res.status(201).json({ message: 'Comment Created Successfully!', newComment, blog });
     } catch (error) {
         console.error('Error creating comment:', error);
-        res.status(500).json({ error: 'Failed to Add Comment' });
+        res.status(500).json({ error: 'Failed to create comment' });
     }
 };
+
+
 
 export const getCommentById = async (req: Request, res: Response) => {
     try {
